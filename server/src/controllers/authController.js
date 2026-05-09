@@ -24,8 +24,8 @@ const sendTokenResponse = async (user, statusCode, res) => {
 
   const cookieBase = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    secure: true, // Obligatorio para sameSite: 'none'
+    sameSite: 'none', // Permite que la cookie viaje entre Vercel y Render
   };
 
   res
@@ -164,8 +164,8 @@ exports.refresh = async (req, res) => {
     res
       .cookie('access_token', newAccessToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        secure: true,
+        sameSite: 'none',
         maxAge: 15 * 60 * 1000,
       })
       .status(200)
