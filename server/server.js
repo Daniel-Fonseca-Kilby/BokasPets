@@ -19,15 +19,18 @@ const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:5174',
   'http://localhost:5175',
-  process.env.FRONTEND_URL, // e.g. https://bokaspets.vercel.app
-].filter(Boolean);
+  process.env.FRONTEND_URL,
+].filter(Boolean).map(url => url.replace(/\/$/, "")); // Quitar barra final si existe
 
 app.use(cors({ 
   origin: function (origin, callback) {
-    // allow requests with no origin (mobile apps, curl, Render health checks)
-    if (!origin || allowedOrigins.includes(origin)) {
+    // Normalizar el origin para la comparación
+    const normalizedOrigin = origin ? origin.replace(/\/$/, "") : null;
+    
+    if (!origin || allowedOrigins.includes(normalizedOrigin)) {
       callback(null, true);
     } else {
+      console.log('CORS Blocked for origin:', origin);
       callback(new Error('Not allowed by CORS'));
     }
   }, 
