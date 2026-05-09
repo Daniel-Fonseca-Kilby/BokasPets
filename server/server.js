@@ -36,8 +36,8 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
-// Aplicar globalLimiter a todas las rutas — primera línea de defensa
-app.use(globalLimiter);
+// Aplicar globalLimiter a todas las rutas — (Comentado temporalmente para pruebas de despliegue)
+// app.use(globalLimiter);
 
 // Routes
 app.use('/api/auth', require('./src/routes/authRoutes'));
