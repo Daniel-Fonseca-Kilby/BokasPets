@@ -50,9 +50,14 @@ exports.updateOrderStatus = async (req, res) => {
     // El email no debe interrumpir la actualización si falla
     if (status === 'processing' || status === 'delivered') {
       try {
+        console.log(`Intentando enviar correo a ${order.user.email} por cambio a estado: ${status}`);
         await sendOrderStatusEmail(order.user, updatedOrder);
       } catch (emailError) {
-        console.error('Error enviando email de estado de orden:', emailError.message);
+        console.error('Error detallado de Resend:', {
+          message: emailError.message,
+          stack: emailError.stack,
+          user: order.user.email
+        });
       }
     }
 
