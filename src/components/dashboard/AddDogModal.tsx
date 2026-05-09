@@ -38,7 +38,7 @@ const initialState = {
   allergies: [] as string[],
 };
 
-const AddDogModal = ({ open, onClose, onAdd }: AddDogModalProps) => {
+const AddDogModal = ({ open, onClose, onAdd, onUploadPhoto }: AddDogModalProps) => {
   const [newDog, setNewDog] = useState(initialState);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
@@ -120,7 +120,7 @@ const AddDogModal = ({ open, onClose, onAdd }: AddDogModalProps) => {
               value={newDog.ageYears}
               onChange={(e) => setNewDog({ ...newDog, ageYears: Number(e.target.value) })}
               fullWidth
-              inputProps={{ min: 0, max: 25 }}
+              slotProps={{ htmlInput: { min: 0, max: 25 } }}
             />
             <TextField
               label="Peso (Kg)"
@@ -128,7 +128,7 @@ const AddDogModal = ({ open, onClose, onAdd }: AddDogModalProps) => {
               value={newDog.weightKg}
               onChange={(e) => setNewDog({ ...newDog, weightKg: Number(e.target.value) })}
               fullWidth
-              inputProps={{ min: 0.1, max: 120, step: 0.1 }}
+              slotProps={{ htmlInput: { min: 0.1, max: 120, step: 0.1 } }}
             />
           </Box>
           <FormControl fullWidth>
@@ -190,12 +190,12 @@ const AddDogModal = ({ open, onClose, onAdd }: AddDogModalProps) => {
                   {photoFile ? 'Cambiar foto' : 'Subir foto'}
                 </Button>
                 {photoFile && (
-                  <Typography variant="caption" display="block" color="text.secondary" sx={{ mt: 0.5 }}>
+                  <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
                     {photoFile.name}
                   </Typography>
                 )}
                 {photoError && (
-                  <Typography variant="caption" display="block" color="error" sx={{ mt: 0.5 }}>
+                  <Typography variant="caption" color="error" sx={{ mt: 0.5, display: 'block' }}>
                     {photoError}
                   </Typography>
                 )}

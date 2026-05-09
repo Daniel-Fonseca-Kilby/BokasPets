@@ -7,10 +7,9 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  TooltipProps
 } from 'recharts';
 import { Card, CardContent, Typography, Skeleton, Box } from '@mui/material';
-import { RevenueMonth } from '../../../hooks/useMetrics';
+import type { RevenueMonth } from '../../../hooks/useMetrics';
 
 interface RevenueChartProps {
   data?: RevenueMonth[];
@@ -18,16 +17,16 @@ interface RevenueChartProps {
 }
 
 // Custom Tooltip para formatear la moneda
-const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
+const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: any[]; label?: string }) => {
   if (active && payload && payload.length) {
     return (
       <Box sx={{ bgcolor: 'white', p: 1.5, border: '1px solid #e0e0e0', borderRadius: 2, boxShadow: 2 }}>
         <Typography variant="body2" sx={{ fontWeight: 'bold', mb: 1 }}>{label}</Typography>
         <Typography variant="body2" sx={{ color: '#4e7a5e' }}>
-          Ingresos: ${payload[0].value?.toLocaleString('es-MX', { minimumFractionDigits: 0 })}
+          Ingresos: ${(payload[0]?.value ?? 0).toLocaleString('es-MX', { minimumFractionDigits: 0 })}
         </Typography>
         <Typography variant="body2" sx={{ color: '#8c6b5d' }}>
-          Pedidos: {payload[1].value}
+          Pedidos: {payload[1]?.value ?? 0}
         </Typography>
       </Box>
     );

@@ -64,7 +64,7 @@ export const getLoyaltyLevel = (points: number): string => {
  * @param age - Edad en años
  * @returns Nombre del plan sugerido
  */
-export const suggestPlan = (weight: number, activity: string, age: number): string => {
+export const suggestPlan = (_weight: number, activity: string, age: number): string => {
   if (age < 1 || activity === 'alto') {
     return 'Bokita de Res'; // Alta energía y proteína
   } else if (age >= 8 || activity === 'bajo') {

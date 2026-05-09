@@ -1,4 +1,4 @@
-import { Component, ErrorInfo, ReactNode } from 'react';
+import { Component, type ErrorInfo, type ReactNode } from 'react';
 import { Box, Typography, Button, Container } from '@mui/material';
 
 interface Props {
@@ -43,7 +43,7 @@ class ErrorBoundary extends Component<Props, State> {
             <Typography variant="h4" gutterBottom>
               ¡Guau! Algo salió mal.
             </Typography>
-            <Typography variant="body1" color="text.secondary" paragraph>
+            <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
               Nuestros perritos de mantenimiento ya están trabajando en ello. Por favor intenta recargar la página.
             </Typography>
             <Button 
