@@ -1,73 +1,105 @@
-# React + TypeScript + Vite
+# 🐾 BokasPets
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> A full-stack pet management platform built with modern web technologies.
 
-Currently, two official plugins are available:
+![React](https://img.shields.io/badge/react-19.2.5-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+![TypeScript](https://img.shields.io/badge/typescript-5.x-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
+![Node.js](https://img.shields.io/badge/node.js-22.x-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)
+![MUI](https://img.shields.io/badge/MUI-007FFF?style=for-the-badge&logo=mui&logoColor=white)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+BokasPets is a comprehensive web application designed to help pet owners manage their pet's needs, subscriptions, and profiles. With a secure backend and a responsive, interactive user interface, it provides a seamless experience for both users and administrators.
 
-## React Compiler
+## ✨ Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **User Authentication**: Secure Login & Registration using JWT and Bcrypt.
+- **Interactive Dashboard**: View insights, metrics, and manage pet profiles.
+- **Role-based Access**: Dedicated Admin panel for managing users and platform data.
+- **Subscription Plans**: View and manage service tiers.
+- **Profile Management**: Update user and pet details, including image uploads via Cloudinary.
+- **Responsive Design**: Beautiful, mobile-friendly UI built with Material UI & Framer Motion.
 
-## Expanding the ESLint configuration
+## 🛠️ Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Frontend
+- **Framework**: React 19 + TypeScript + Vite
+- **Styling**: Material UI (MUI), Emotion, Framer Motion
+- **Routing**: React Router DOM
+- **Data Visualization**: Recharts
+- **Icons**: Lucide React
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Backend
+- **Runtime**: Node.js
+- **Framework**: Express.js
+- **Database**: MongoDB (Mongoose)
+- **Authentication**: JSON Web Tokens (JWT)
+- **Storage**: Cloudinary & Multer
+- **Validation**: Zod
+- **Email Services**: Resend
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## 🚀 Getting Started
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Prerequisites
+- Node.js (v22 or higher)
+- MongoDB running locally or a MongoDB Atlas URI
+- Cloudinary Account (for image uploads)
+- Resend Account (for emails)
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/your-username/bokaspets.git
+   cd bokaspets
+   ```
+
+2. **Install dependencies for both frontend and backend**
+   ```bash
+   # Install frontend dependencies
+   npm install
+
+   # Install backend dependencies
+   cd server
+   npm install
+   cd ..
+   ```
+
+3. **Set up Environment Variables**
+   - Create a `.env` file in the root directory for frontend vars.
+   - Create a `.env` file in the `server` directory for backend vars (MongoDB URI, JWT Secret, Cloudinary keys, etc.).
+
+4. **Run the Application Locally**
+   We use `concurrently` to run both the Vite dev server and the Node.js backend simultaneously.
+   ```bash
+   npm run dev:all
+   ```
+   - Frontend: `http://localhost:5173`
+   - Backend: `http://localhost:5000` (or your configured port)
+
+## 📁 Project Structure
+
+```text
+bokaspets/
+├── public/             # Static assets
+├── server/             # Node.js Express backend
+│   ├── src/            # Controllers, Models, Routes, Middlewares
+│   └── server.js       # Entry point
+├── src/                # React frontend
+│   ├── components/     # Reusable UI components
+│   ├── context/        # React Context providers
+│   ├── hooks/          # Custom React hooks
+│   ├── pages/          # Application pages (Dashboard, Login, etc.)
+│   ├── services/       # API integration
+│   ├── theme/          # MUI theme configuration
+│   └── utils/          # Helper functions
+└── package.json        # Root dependencies and scripts
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🤝 Contributing
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Contributions, issues, and feature requests are welcome!
+Feel free to check [issues page](https://github.com/your-username/bokaspets/issues).
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 📝 License
+
+This project is licensed under the [ISC License](LICENSE).
