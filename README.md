@@ -22,6 +22,7 @@ BokasPets is a comprehensive web application designed to help pet owners manage 
 ## 🛠️ Tech Stack
 
 ### Frontend
+
 - **Framework**: React 19 + TypeScript + Vite
 - **Styling**: Material UI (MUI), Emotion, Framer Motion
 - **Routing**: React Router DOM
@@ -29,6 +30,7 @@ BokasPets is a comprehensive web application designed to help pet owners manage 
 - **Icons**: Lucide React
 
 ### Backend
+
 - **Runtime**: Node.js
 - **Framework**: Express.js
 - **Database**: MongoDB (Mongoose)
@@ -40,6 +42,7 @@ BokasPets is a comprehensive web application designed to help pet owners manage 
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - Node.js (v22 or higher)
 - MongoDB running locally or a MongoDB Atlas URI
 - Cloudinary Account (for image uploads)
@@ -48,12 +51,14 @@ BokasPets is a comprehensive web application designed to help pet owners manage 
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/your-username/bokaspets.git
    cd bokaspets
    ```
 
 2. **Install dependencies for both frontend and backend**
+
    ```bash
    # Install frontend dependencies
    npm install
@@ -65,14 +70,26 @@ BokasPets is a comprehensive web application designed to help pet owners manage 
    ```
 
 3. **Set up Environment Variables**
-   - Create a `.env` file in the root directory for frontend vars.
-   - Create a `.env` file in the `server` directory for backend vars (MongoDB URI, JWT Secret, Cloudinary keys, etc.).
+   ### Environment Variables
+
+Create a `.env` file in `/server` with the following:
+
+```env
+MONGO_URI=your_mongodb_uri
+JWT_SECRET=your_jwt_secret
+CLOUDINARY_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+RESEND_API_KEY=your_resend_key
+PORT=5000
+```
 
 4. **Run the Application Locally**
    We use `concurrently` to run both the Vite dev server and the Node.js backend simultaneously.
    ```bash
    npm run dev:all
    ```
+
    - Frontend: `http://localhost:5173`
    - Backend: `http://localhost:5000` (or your configured port)
 
@@ -98,7 +115,7 @@ bokaspets/
 ## 🤝 Contributing
 
 Contributions, issues, and feature requests are welcome!
-Feel free to check [issues page](https://github.com/your-username/bokaspets/issues).
+Feel free to check [issues page](https://github.com/Daniel-Fonseca-Kilby/bokaspets/issues).
 
 ## 📝 License
 
