@@ -56,7 +56,7 @@ const Dashboard = () => {
       <AddDogModal 
         open={open} 
         onClose={() => setOpen(false)} 
-        onAdd={addDog as any} 
+        onAdd={addDog} 
         onUploadPhoto={uploadPhoto}
       />
 

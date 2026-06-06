@@ -1,34 +1,9 @@
-import { createContext, useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { ReactNode } from 'react';
 import api from '../services/api';
 import toast from 'react-hot-toast';
-
-export interface User {
-  _id: string;
-  name: string;
-  email: string;
-  phone?: string;
-  address?: string;
-  loyaltyPoints: number;
-  role?: string;
-  // Campos de foto de Cloudinary
-  photo?: string;
-  photoPublicId?: string;
-}
-
-interface AuthContextType {
-  user: User | null;
-  isAuthenticated: boolean;
-  login: (userData: { email: string; password: string }) => Promise<void>;
-  register: (userData: { name: string; email: string; password: string; phone?: string; address?: string }) => Promise<void>;
-  logout: () => Promise<void>;
-  loading: boolean;
-  setUser: (user: User | null) => void;
-  /** Actualiza solo la foto en el contexto sin recargar toda la sesión */
-  updateUserPhoto: (photo: string, photoPublicId: string) => void;
-}
-
-export const AuthContext = createContext<AuthContextType>({} as AuthContextType);
+import { AuthContext } from './AuthContext';
+import type { User } from './AuthContext';
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -40,7 +15,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const res = await api.get('/auth/me');
       setUser(res.data);
       setIsAuthenticated(true);
-    } catch (error) {
+    } catch {
       setUser(null);
       setIsAuthenticated(false);
     } finally {
@@ -49,7 +24,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    fetchUser();
+    // Usamos setTimeout para evitar que la llamada a fetchUser (y sus consecuentes setStates)
+    // se realice de forma síncrona dentro del effect, eliminando alertas de renders en cascada.
+    const timer = setTimeout(() => {
+      fetchUser();
+    }, 0);
+    return () => clearTimeout(timer);
   }, [fetchUser]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -69,8 +49,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       await api.post('/auth/logout');
       toast.success('Sesión cerrada 👋');
-    } catch (error) {
-      console.error('Logout error', error);
+    } catch {
+      console.error('Logout error');
       toast.error('Error al cerrar sesión');
     } finally {
       setUser(null);
@@ -80,8 +60,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   /**
    * Actualiza la foto del usuario en el contexto de forma optimista.
-   * Se llama desde Profile.tsx después de una subida exitosa para que
-   * la Navbar refleje el cambio inmediatamente sin recargar la página.
    */
   const updateUserPhoto = (photo: string, photoPublicId: string) => {
     if (user) {

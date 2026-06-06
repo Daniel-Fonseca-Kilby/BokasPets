@@ -1,7 +1,7 @@
-import { useState, useCallback, useContext, useEffect } from 'react';
-import api from '../services/api';
-import { AuthContext } from '../context/AuthContext';
-import toast from 'react-hot-toast';
+import { useState, useCallback, useContext, useEffect } from "react";
+import api from "../services/api";
+import { AuthContext } from "../context/AuthContext";
+import toast from "react-hot-toast";
 
 export interface Dog {
   _id: string;
@@ -29,10 +29,10 @@ export const useDogs = () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await api.get('/dogs');
+      const res = await api.get("/dogs");
       setDogs(res.data);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Error fetching dogs';
+      const msg = err instanceof Error ? err.message : "Error fetching dogs";
       setError(msg);
       console.error(msg, err);
     } finally {
@@ -41,21 +41,26 @@ export const useDogs = () => {
   }, [isAuthenticated]);
 
   useEffect(() => {
-    fetchDogs();
+    const timer = setTimeout(() => {
+      fetchDogs();
+    }, 0);
+    return () => clearTimeout(timer);
   }, [fetchDogs]);
 
-  const addDog = async (dogData: Omit<Dog, '_id' | 'photo' | 'photoPublicId'>) => {
+  const addDog = async (
+    dogData: Omit<Dog, "_id" | "photo" | "photoPublicId">,
+  ) => {
     setLoading(true);
     setError(null);
     try {
-      const res = await api.post('/dogs', dogData);
+      const res = await api.post("/dogs", dogData);
       await fetchDogs();
-      toast.success('Perro agregado exitosamente ✅');
+      toast.success("Perro agregado exitosamente ✅");
       return res.data;
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Error adding dog';
+      const msg = err instanceof Error ? err.message : "Error adding dog";
       setError(msg);
-      toast.error('Error al agregar perro ❌');
+      toast.error("Error al agregar perro ❌");
       return null;
     } finally {
       setLoading(false);
@@ -67,10 +72,10 @@ export const useDogs = () => {
       const res = await api.put(`/dogs/${dogId}`, dogData);
       // Actualizar el perro en el estado local sin necesidad de refetch
       setDogs((prev) => prev.map((d) => (d._id === dogId ? res.data : d)));
-      toast.success('Perro actualizado ✅');
+      toast.success("Perro actualizado ✅");
       return true;
     } catch {
-      toast.error('Error al actualizar perro ❌');
+      toast.error("Error al actualizar perro ❌");
       return false;
     }
   };
@@ -86,4 +91,3 @@ export const useDogs = () => {
 
   return { dogs, loading, error, fetchDogs, addDog, updateDog, updateDogPhoto };
 };
-

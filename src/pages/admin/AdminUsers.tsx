@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import { Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Skeleton, Box, TextField, InputAdornment, Button, Avatar } from '@mui/material';
 import { Search, Plus } from 'lucide-react';
 import toast from 'react-hot-toast';
 import AddAdminModal from '../../components/admin/AddAdminModal';
+import axios from 'axios';
 
 const AdminUsers = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -14,17 +15,17 @@ const AdminUsers = () => {
   const [openModal, setOpenModal] = useState(false);
   const navigate = useNavigate();
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {
       const res = await api.get(`/admin/users?limit=100&search=${search}`);
       setUsers(res.data.users);
-    } catch (error) {
+    } catch {
       toast.error('Error cargando usuarios');
     } finally {
       setLoading(false);
     }
-  };
+  }, [search]);
     
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -32,7 +33,7 @@ const AdminUsers = () => {
     }, 500); // debounce search
     
     return () => clearTimeout(timeoutId);
-  }, [search]);
+  }, [fetchUsers]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleAddAdmin = async (adminData: any) => {
@@ -41,8 +42,13 @@ const AdminUsers = () => {
       toast.success('Administrador creado exitosamente ✅');
       setOpenModal(false);
       fetchUsers();
-    } catch (err: any) {
-      const msg = err.response?.data?.details?.[0]?.message || err.response?.data?.message || 'Error al crear administrador';
+    } catch (err: unknown) {
+      let msg = 'Error al crear administrador';
+      if (axios.isAxiosError(err)) {
+        msg = err.response?.data?.details?.[0]?.message || err.response?.data?.message || msg;
+      } else if (err instanceof Error) {
+        msg = err.message;
+      }
       toast.error(`Error: ${msg}`);
     }
   };

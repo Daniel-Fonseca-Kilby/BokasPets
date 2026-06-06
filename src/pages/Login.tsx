@@ -4,6 +4,7 @@ import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { Container, Box, Typography, TextField, Button, Link, Paper } from '@mui/material';
 import { Dog } from 'lucide-react';
 import toast from 'react-hot-toast';
+import axios from 'axios';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -16,9 +17,14 @@ const Login = () => {
     try {
       await login({ email, password });
       navigate('/dashboard');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Login failed', error);
-      const errorMsg = error.response?.data?.message || 'Error de inicio de sesión. Verifica tus credenciales.';
+      let errorMsg = 'Error de inicio de sesión. Verifica tus credenciales.';
+      if (axios.isAxiosError(error) && error.response?.data?.message) {
+        errorMsg = error.response.data.message;
+      } else if (error instanceof Error) {
+        errorMsg = error.message;
+      }
       toast.error(errorMsg);
     }
   };

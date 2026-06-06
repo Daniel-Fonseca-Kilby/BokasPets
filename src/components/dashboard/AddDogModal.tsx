@@ -5,6 +5,7 @@ import {
   Chip, OutlinedInput, Avatar, Typography, CircularProgress,
 } from '@mui/material';
 import { Camera } from 'lucide-react';
+import type { Dog } from '../../hooks/useDogs';
 
 const ALLERGY_OPTIONS = ['pollo', 'res', 'cerdo', 'granos', 'lácteos', 'huevo', 'pescado'];
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
@@ -13,15 +14,7 @@ const MAX_SIZE_BYTES = 5 * 1024 * 1024;
 interface AddDogModalProps {
   open: boolean;
   onClose: () => void;
-  onAdd: (dogData: {
-    name: string;
-    breed: string;
-    ageYears: number;
-    ageMonths: number;
-    weightKg: number;
-    activityLevel: string;
-    allergies: string[];
-  }) => Promise<any>;
+  onAdd: (dogData: Omit<Dog, '_id' | 'photo' | 'photoPublicId'>) => Promise<Dog | null>;
   /** Se llama después de crear el perro para subir la foto si el usuario eligió una */
   onUploadPhoto?: (dogId: string, file: File) => Promise<unknown>;
   /** ID del nuevo perro — disponible solo si se pasa desde el padre después de crear */
@@ -69,7 +62,7 @@ const AddDogModal = ({ open, onClose, onAdd, onUploadPhoto }: AddDogModalProps) 
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      const addedDog = await onAdd(newDog) as any;
+      const addedDog = await onAdd(newDog);
       if (addedDog) {
         if (photoFile && onUploadPhoto) {
           await onUploadPhoto(addedDog._id, photoFile);

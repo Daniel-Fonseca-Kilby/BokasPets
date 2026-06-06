@@ -6,7 +6,10 @@ const OrderHistory = () => {
   const { orders, loading, fetchOrders } = useOrders();
 
   useEffect(() => {
-    fetchOrders();
+    const timer = setTimeout(() => {
+      fetchOrders();
+    }, 0);
+    return () => clearTimeout(timer);
   }, [fetchOrders]);
 
   return (

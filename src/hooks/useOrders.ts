@@ -1,4 +1,5 @@
 import { useState, useCallback, useContext } from 'react';
+import axios from 'axios';
 import api from '../services/api';
 import { AuthContext } from '../context/AuthContext';
 import toast from 'react-hot-toast';
@@ -7,6 +8,11 @@ export interface Order {
   _id: string;
   totalPrice: number;
   createdAt: string;
+  items: Array<{ name: string; qty: number; price: number }>;
+}
+
+export interface CreateOrderData {
+  totalPrice: number;
   items: Array<{ name: string; qty: number; price: number }>;
 }
 
@@ -23,8 +29,13 @@ export const useOrders = () => {
     try {
       const res = await api.get('/orders');
       setOrders(res.data);
-    } catch (err: any) {
-      const msg = err.response?.data?.message || err.response?.data?.error || 'Error fetching orders';
+    } catch (err: unknown) {
+      let msg = 'Error fetching orders';
+      if (axios.isAxiosError(err)) {
+        msg = err.response?.data?.message || err.response?.data?.error || msg;
+      } else if (err instanceof Error) {
+        msg = err.message;
+      }
       setError(msg);
       console.error(msg, err);
     } finally {
@@ -32,15 +43,20 @@ export const useOrders = () => {
     }
   }, [isAuthenticated]);
 
-  const createOrder = async (orderData: any) => {
+  const createOrder = async (orderData: CreateOrderData) => {
     setLoading(true);
     setError(null);
     try {
       const res = await api.post('/orders', orderData);
       toast.success('Plan comprado exitosamente ✅');
       return { success: true, data: res.data };
-    } catch (err: any) {
-      const msg = err.response?.data?.message || err.response?.data?.error || 'Error creando la orden';
+    } catch (err: unknown) {
+      let msg = 'Error creando la orden';
+      if (axios.isAxiosError(err)) {
+        msg = err.response?.data?.message || err.response?.data?.error || msg;
+      } else if (err instanceof Error) {
+        msg = err.message;
+      }
       setError(msg);
       toast.error(`Error: ${msg}`);
       return { success: false, error: msg };

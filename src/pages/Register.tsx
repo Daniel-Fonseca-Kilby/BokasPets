@@ -4,6 +4,7 @@ import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { Container, Box, Typography, TextField, Button, Link, Paper, Grid } from '@mui/material';
 import { Dog } from 'lucide-react';
 import toast from 'react-hot-toast';
+import axios from 'axios';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -25,11 +26,16 @@ const Register = () => {
     try {
       await register(formData);
       navigate('/dashboard');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Registration failed', error);
-      const errorMsg = error.response?.data?.details?.[0]?.message 
-        || error.response?.data?.message 
-        || 'Error en el registro. Por favor verifica tus datos.';
+      let errorMsg = 'Error en el registro. Por favor verifica tus datos.';
+      if (axios.isAxiosError(error)) {
+        errorMsg = error.response?.data?.details?.[0]?.message 
+          || error.response?.data?.message 
+          || errorMsg;
+      } else if (error instanceof Error) {
+        errorMsg = error.message;
+      }
       toast.error(errorMsg);
     }
   };

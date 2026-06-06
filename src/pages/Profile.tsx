@@ -4,6 +4,7 @@ import api from '../services/api';
 import { Container, Box, Typography, Button, Paper, Grid, TextField, Avatar, CircularProgress } from '@mui/material';
 import { Camera } from 'lucide-react';
 import toast from 'react-hot-toast';
+import axios from 'axios';
 
 const Profile = () => {
   const { user, setUser } = useContext(AuthContext);
@@ -33,8 +34,14 @@ const Profile = () => {
       const res = await api.put('/auth/profile', profileData);
       setUser(res.data);
       toast.success('Perfil actualizado ✅');
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Error al actualizar perfil ❌');
+    } catch (err: unknown) {
+      let msg = 'Error al actualizar perfil ❌';
+      if (axios.isAxiosError(err) && err.response?.data?.message) {
+        msg = err.response.data.message;
+      } else if (err instanceof Error) {
+        msg = err.message;
+      }
+      toast.error(msg);
     }
   };
 
@@ -54,8 +61,14 @@ const Profile = () => {
       });
       toast.success('Contraseña cambiada ✅');
       setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Error al cambiar contraseña ❌');
+    } catch (err: unknown) {
+      let msg = 'Error al cambiar contraseña ❌';
+      if (axios.isAxiosError(err) && err.response?.data?.message) {
+        msg = err.response.data.message;
+      } else if (err instanceof Error) {
+        msg = err.message;
+      }
+      toast.error(msg);
     }
   };
 
@@ -91,8 +104,14 @@ const Profile = () => {
       if (photoPreview) URL.revokeObjectURL(photoPreview);
       setPhotoPreview(null);
       toast.success('¡Foto de perfil actualizada! 📸');
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Error al subir la foto');
+    } catch (err: unknown) {
+      let msg = 'Error al subir la foto';
+      if (axios.isAxiosError(err) && err.response?.data?.message) {
+        msg = err.response.data.message;
+      } else if (err instanceof Error) {
+        msg = err.message;
+      }
+      toast.error(msg);
     } finally {
       setIsUploadingPhoto(false);
     }

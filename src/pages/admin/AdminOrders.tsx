@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
-import { Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Select, MenuItem, Badge, Box, Tabs, Tab, Skeleton, IconButton, Button } from '@mui/material';
+import { Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Select, MenuItem, Badge, Box, Tabs, Tab, Skeleton, IconButton, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import { Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -18,7 +18,7 @@ const AdminOrders = () => {
       // Using large limit to simulate no pagination for now, can implement pagination later
       const res = await api.get(`/admin/orders?limit=100`);
       setOrders(res.data.orders);
-    } catch (error) {
+    } catch {
       toast.error('Error cargando órdenes');
     } finally {
       setLoading(false);
@@ -26,7 +26,10 @@ const AdminOrders = () => {
   };
 
   useEffect(() => {
-    fetchOrders();
+    const timer = setTimeout(() => {
+      fetchOrders();
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   const handleStatusChange = async (id: string, newStatus: string) => {
@@ -34,20 +37,30 @@ const AdminOrders = () => {
       await api.patch(`/admin/orders/${id}/status`, { status: newStatus });
       toast.success('Estado de la orden actualizado ✅');
       setOrders(orders.map(o => o._id === id ? { ...o, status: newStatus } : o));
-    } catch (error) {
+    } catch {
       toast.error('Error al actualizar estado');
     }
   };
 
-  const handleDeleteOrder = async (id: string) => {
-    if (window.confirm('¿Estás seguro de que deseas eliminar este pedido permanentemente?')) {
-      try {
-        await api.delete(`/admin/orders/${id}`);
-        toast.success('Pedido eliminado exitosamente 🗑️');
-        setOrders(orders.filter(o => o._id !== id));
-      } catch (error) {
-        toast.error('Error al eliminar pedido');
-      }
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [orderToDelete, setOrderToDelete] = useState<string | null>(null);
+
+  const handleDeleteClick = (id: string) => {
+    setOrderToDelete(id);
+    setDeleteConfirmOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!orderToDelete) return;
+    try {
+      await api.delete(`/admin/orders/${orderToDelete}`);
+      toast.success('Pedido eliminado exitosamente 🗑️');
+      setOrders(orders.filter(o => o._id !== orderToDelete));
+    } catch {
+      toast.error('Error al eliminar pedido');
+    } finally {
+      setDeleteConfirmOpen(false);
+      setOrderToDelete(null);
     }
   };
 
@@ -121,7 +134,7 @@ const AdminOrders = () => {
                       <span>{order.user?.name || 'Usuario borrado'}</span>
                     )}
                   </TableCell>
-                  <TableCell>{order.items.map((i: any) => i.name).join(', ')}</TableCell>
+                  <TableCell>{order.items.map((i: { name: string }) => i.name).join(', ')}</TableCell>
                   <TableCell>${order.totalPrice.toFixed(2)}</TableCell>
                   <TableCell>
                     <Select
@@ -140,7 +153,7 @@ const AdminOrders = () => {
                   </TableCell>
                   <TableCell>{new Date(order.createdAt).toLocaleDateString()}</TableCell>
                   <TableCell align="center">
-                    <IconButton size="small" color="error" onClick={() => handleDeleteOrder(order._id)}>
+                    <IconButton size="small" color="error" onClick={() => handleDeleteClick(order._id)}>
                       <Trash2 size={18} />
                     </IconButton>
                   </TableCell>
@@ -150,6 +163,34 @@ const AdminOrders = () => {
           </Table>
         </TableContainer>
       </Paper>
+
+      {/* Modal de confirmación de eliminación */}
+      <Dialog
+        open={deleteConfirmOpen}
+        onClose={() => setDeleteConfirmOpen(false)}
+        slotProps={{
+          paper: {
+            sx: { borderRadius: 4, p: 1 }
+          }
+        }}
+      >
+        <DialogTitle sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Trash2 size={24} color="#d32f2f" /> ¿Eliminar pedido?
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            ¿Estás seguro de que deseas eliminar este pedido permanentemente? Esta acción no se puede deshacer.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions sx={{ p: 2 }}>
+          <Button onClick={() => setDeleteConfirmOpen(false)} sx={{ color: 'text.secondary' }}>
+            Cancelar
+          </Button>
+          <Button onClick={handleDeleteConfirm} color="error" variant="contained" sx={{ borderRadius: 2 }}>
+            Eliminar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

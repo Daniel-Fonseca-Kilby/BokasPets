@@ -18,7 +18,7 @@ const AdminUserDetail = () => {
       try {
         const res = await api.get(`/admin/users/${id}`);
         setData(res.data);
-      } catch (error) {
+      } catch {
         toast.error('Error cargando detalle de usuario');
         navigate('/admin/users');
       } finally {

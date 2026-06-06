@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import axios from 'axios';
 import api from '../services/api';
 import toast from 'react-hot-toast';
 
@@ -82,8 +83,13 @@ export const useMetrics = () => {
       cachedData = res.data;
       lastFetchTime = Date.now();
       setData(res.data);
-    } catch (err: any) {
-      const msg = err.response?.data?.message || 'Error cargando métricas del dashboard';
+    } catch (err: unknown) {
+      let msg = 'Error cargando métricas del dashboard';
+      if (axios.isAxiosError(err) && err.response?.data?.message) {
+        msg = err.response.data.message;
+      } else if (err instanceof Error) {
+        msg = err.message;
+      }
       setError(msg);
       toast.error(msg);
     } finally {
@@ -93,7 +99,10 @@ export const useMetrics = () => {
   }, []);
 
   useEffect(() => {
-    fetchMetrics();
+    const timer = setTimeout(() => {
+      fetchMetrics();
+    }, 0);
+    return () => clearTimeout(timer);
   }, [fetchMetrics]);
 
   return {
